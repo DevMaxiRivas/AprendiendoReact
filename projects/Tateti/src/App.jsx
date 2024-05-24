@@ -6,11 +6,37 @@ import { TURNS } from './constants.js'
 import { checkWinnerFrom, checkEndGame } from './logic/board.js'
 import { WinnerModal } from './components/WinnerModal.jsx'
 
+import { saveGameToStorage, resetGameToStorage } from './logic/Storage/index.js'
+
 function App() {
 
   // Declaraciones de estados
-  const [board, setBoard] = useState(Array(9).fill(null))
-  const [turn, setTurn] = useState(TURNS.x)
+  // Mala practica:
+  // No se deben definir los estados y todos los hooks dentro de una condicional
+  // if(...) const [board, setBoard] = useState(Array(9).fill(null))
+  // Ya que react internamente guarda la posicion en el codigo eb la que se
+  // encuentra cada hook si lo ejecuta en un IF pierde las posiciones 
+
+  // Los hooks siempre deben estar en el cuerpo de un componente
+
+  // Si leemos el localStorage desde fuera es mucho mas lento que si lo leyeramos
+  // de la otra forma ademas de que cada vez que se renderice el componente se volveria
+  // a buscar las cosas al localStorage
+  // const boardFromStorage = window.localStorage.getItem('board')
+
+
+  // Como los estados solo se definen una vez es mas conveniente ponerlo aqui
+  const [board, setBoard] = useState(() => {
+    const boardFromStorage = window.localStorage.getItem('board')
+    return boardFromStorage ? JSON.parse(boardFromStorage) : Array(9).fill(null)
+  })
+
+  const [turn, setTurn] = useState(() => {
+    const turnFromStorage = window.localStorage.getItem('turn')
+    // esto es lo mimo que turnFromStorage == null o undefined 
+    return turnFromStorage ?? TURNS.x
+  })
+
   // Null si no hay ganador, false si hay empate
   const [winner, setWinner] = useState(null)
 
@@ -19,6 +45,10 @@ function App() {
     setBoard(Array(9).fill(null))
     setTurn(TURNS.x)
     setWinner(null)
+
+    // Si reseteamos el juego tambien debemos resetear el localStorage
+    resetGameToStorage()
+
   }
 
   const updateBoard = (index) => {
@@ -41,6 +71,10 @@ function App() {
     // Cambiar Turno
     const newTurn = turn === TURNS.x ? TURNS.o : TURNS.x
     setTurn(newTurn)
+
+
+    // Guardamos la partida
+    saveGameToStorage(newBoard, newTurn)
 
     // revisamos si hay ganador
     // hay que pasar newBoard porque setBoard es asincrono es decir que 
