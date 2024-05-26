@@ -1,0 +1,21 @@
+/* centrar si el main es el div contenedor */
+main {
+    display: flex;
+    flex-direction: column;
+    place-items: center;
+    max-width: 800px;
+    margin: auto;
+    font-family: system-ui;
+}
+
+section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+}
+
+section img {
+    max-width: 320px;
+    height: auto;
+}
