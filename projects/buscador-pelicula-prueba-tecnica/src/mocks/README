@@ -1,0 +1,7 @@
+Esta carpeta almacenara los JSON que puede entregar la API
+para tener a mano la estructura en caso de exito o fallo
+Esto es para trabajar la logica unicamente sin tener que
+implementar el fetch
+
+with-results.json => http://www.omdbapi.com/?apikey=4287ad07&s=avengers
+no-results.json => http://www.omdbapi.com/?apikey=4287ad07&s=peliculax
